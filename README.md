@@ -230,3 +230,73 @@ app.listen(3000, () => console.log("Server running on port 3000"));
 | Common in | APIs, Web Browsers |
 
 Would you like an example of handling **CORS errors in an Express API**? 🚀
+
+Yes! **CORS (Cross-Origin Resource Sharing) comes into play** in this scenario.  
+
+### **🔹 Why?**
+Even though both the frontend (`localhost:8000`) and backend (`localhost:3000`) are running on `localhost`, they **have different ports**, making them **different origins**.  
+
+### **🔹 What is an Origin?**
+An **origin** is defined by:  
+- **Protocol** (`http` or `https`)  
+- **Domain** (`localhost` or `example.com`)  
+- **Port** (`8000`, `3000`, etc.)  
+
+🔸 **Example:**
+| Frontend (API Request) | Backend (API Server) | CORS? |
+|------------------------|---------------------|------|
+| `http://localhost:8000` | `http://localhost:3000` | ✅ Yes (Different Ports) |
+| `http://localhost:8000` | `http://localhost:8000` | ❌ No (Same Origin) |
+
+---
+
+### **🔹 How to Fix CORS in Node.js (Express.js)?**
+Add CORS middleware in your backend (`localhost:3000`).
+
+#### **Option 1: Use `cors` Package (Recommended)**
+```javascript
+const express = require("express");
+const cors = require("cors");
+
+const app = express();
+
+// Allow requests from frontend (localhost:8000)
+app.use(cors({ origin: "http://localhost:8000" }));
+
+app.get("/data", (req, res) => {
+    res.json({ message: "CORS enabled!" });
+});
+
+app.listen(3000, () => console.log("Server running on port 3000"));
+```
+✅ This allows **only** requests from `http://localhost:8000`.  
+
+#### **Option 2: Manually Set Headers (Basic)**
+```javascript
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "http://localhost:8000");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    next();
+});
+```
+✅ Use this if you don’t want the `cors` package.
+
+---
+
+### **🔹 What Happens Without CORS?**
+If your frontend (`localhost:8000`) tries to fetch data from the backend (`localhost:3000`) without CORS enabled, the browser blocks it and throws this error in the console:  
+
+```
+Access to fetch at 'http://localhost:3000/data' from origin 'http://localhost:8000' 
+has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present.
+```
+
+---
+
+### **🔹 When is CORS NOT Needed?**
+- If **frontend and backend share the same origin** (`http://localhost:3000`).
+- If you're making **server-to-server requests** (CORS only applies to browsers).
+- If using **a proxy (e.g., in React or Next.js dev server)**.
+
+Would you like a **proxy setup to bypass CORS in React/Next.js**? 🚀
