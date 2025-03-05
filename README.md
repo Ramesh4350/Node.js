@@ -141,3 +141,92 @@ child.on("message", (message) => {
 - Use **`fork`** for **Node.js-to-Node.js communication**.
 
 Would you like a more specific example related to your e-commerce microservices or another use case? 🚀
+
+### **What is `OPTIONS` in REST API?**  
+
+The `OPTIONS` HTTP method is used to **retrieve information about the communication options** available for a resource. It helps clients understand what HTTP methods (e.g., `GET`, `POST`, `PUT`, `DELETE`) are allowed on a specific endpoint.  
+
+---
+
+### **📌 Key Features of `OPTIONS`:**  
+✅ Used for **CORS Preflight Requests** in browsers.  
+✅ Returns **allowed HTTP methods** for a resource.  
+✅ Does **not modify data** (safe & idempotent).  
+✅ Typically returns **response headers only**, no body.  
+
+---
+
+### **🛠 Example 1: Checking Allowed Methods for a Resource**  
+
+#### **Client Request:**  
+```http
+OPTIONS /products HTTP/1.1
+Host: api.example.com
+```
+
+#### **Server Response:**  
+```http
+HTTP/1.1 204 No Content
+Allow: GET, POST, PUT, DELETE, OPTIONS
+```
+🔹 **Explanation:** This means the `/products` endpoint supports `GET`, `POST`, `PUT`, `DELETE`, and `OPTIONS` methods.
+
+---
+
+### **🛠 Example 2: `OPTIONS` in a CORS Preflight Request**  
+
+When a browser makes a **cross-origin request** (CORS), it **automatically sends an `OPTIONS` request first** to check if the API allows it.
+
+#### **Client Preflight Request (Browser to API)**  
+```http
+OPTIONS /orders HTTP/1.1
+Host: api.example.com
+Origin: https://myecommercesite.com
+Access-Control-Request-Method: POST
+```
+
+#### **Server Response**  
+```http
+HTTP/1.1 204 No Content
+Access-Control-Allow-Origin: https://myecommercesite.com
+Access-Control-Allow-Methods: GET, POST, OPTIONS
+Access-Control-Allow-Headers: Content-Type
+```
+🔹 **Explanation:** The API allows requests from `https://myecommercesite.com` and supports `GET`, `POST`, and `OPTIONS`.  
+
+---
+
+### **🚀 How to Handle `OPTIONS` in Node.js (Express.js)?**  
+```javascript
+const express = require("express");
+const app = express();
+
+// Enable CORS and respond to OPTIONS requests
+app.options("*", (req, res) => {
+    res.set("Access-Control-Allow-Origin", "*");
+    res.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.set("Access-Control-Allow-Headers", "Content-Type");
+    res.status(204).send(); // No Content
+});
+
+// Example route
+app.get("/products", (req, res) => {
+    res.json({ message: "Product list" });
+});
+
+app.listen(3000, () => console.log("Server running on port 3000"));
+```
+🔹 **This ensures that browsers can safely interact with your API.**  
+
+---
+
+### **🔑 Summary**
+| Feature  | `OPTIONS` Method |
+|----------|----------------|
+| Purpose  | Check available methods & CORS policies |
+| Modifies Data? | ❌ No |
+| Used in CORS? | ✅ Yes |
+| Typical Response | `Allow` header with supported methods |
+| Common in | APIs, Web Browsers |
+
+Would you like an example of handling **CORS errors in an Express API**? 🚀
