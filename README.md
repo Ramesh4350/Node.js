@@ -1114,3 +1114,55 @@ End    <-- Main Thread
 Inside setTimeout  <-- Event Loop (Timers Phase)
 ```
 Would you like me to mark **worker thread tasks** separately in the diagram? 😊
+
+### **📌 Difference Between Event Loop and Main Thread**  
+
+| Feature         | **Main Thread** 🏗️ | **Event Loop** 🔄 |
+|---------------|----------------|----------------|
+| **Definition** | The single execution thread where Node.js starts executing JavaScript. | A mechanism that continuously checks and processes asynchronous tasks in Node.js. |
+| **Responsibility** | Executes **synchronous** JavaScript code. | Manages **asynchronous** operations using different phases. |
+| **Blocking vs Non-blocking** | Handles blocking (synchronous) code. | Ensures non-blocking execution of I/O operations. |
+| **Execution** | Runs **top-level JavaScript** first, before handing off async tasks. | Keeps running as long as there are pending async tasks. |
+| **Initiation** | Starts immediately when the Node.js process runs. | Gets initialized by the main thread and starts looping. |
+| **Interaction** | Hands off async tasks (e.g., file reading, HTTP requests) to worker threads or the kernel. | Keeps checking for completed async tasks and executes callbacks. |
+| **When Does It Stop?** | Exits when the script is completed and there are no pending operations. | Stops only if there are no pending timers, callbacks, or async tasks. |
+
+---
+
+### **📌 How Does the Main Thread Start the Event Loop?**  
+
+When a Node.js application starts, the **main thread** executes the script from **top to bottom**.  
+
+#### **1️⃣ Execution Flow**  
+```plaintext
+1. Main thread starts.
+2. Executes synchronous JavaScript (global scope).
+3. Initializes the event loop.
+4. Event loop starts processing async tasks.
+5. If there are pending async operations, the event loop keeps running.
+6. If no more tasks, Node.js exits.
+```
+
+#### **2️⃣ Understanding the Event Loop Execution**  
+```javascript
+console.log("1: Start");  // Main thread executes this
+
+setTimeout(() => {
+  console.log("2: Inside setTimeout");  // Event Loop executes this (Timers Phase)
+}, 1000);
+
+console.log("3: End");  // Main thread executes this
+```
+#### **3️⃣ Output:**
+```plaintext
+1: Start  <-- Main Thread
+3: End    <-- Main Thread
+2: Inside setTimeout  <-- Event Loop (after 1000ms)
+```
+
+#### **4️⃣ Key Takeaways**
+✅ **The event loop doesn’t start automatically**—it is **initialized by the main thread**.  
+✅ The **main thread executes all synchronous code first**, then hands over control to the event loop.  
+✅ The **event loop keeps running until there are no more async tasks** left in the queue.  
+
+Would you like a **visual flowchart** to illustrate this? 😊
