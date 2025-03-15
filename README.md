@@ -1234,3 +1234,67 @@ console.log("5. End"); // Main thread
 ✅ The event loop keeps running **as long as there are pending tasks**.  
 
 Would you like a **visual flowchart** for better understanding? 😊
+
+### **📌 Understanding Pending Callbacks in the Event Loop**  
+
+#### **What Does "Deferred to the Next Loop Iteration" Mean?**  
+- Some **I/O operations (like file system or network requests)** may complete, but their callbacks are **not executed immediately**.  
+- Instead, Node.js **defers them** to the **next iteration of the event loop**.  
+- These callbacks are executed in the **Pending Callbacks Phase**.
+
+---
+
+### **🚀 Example: When Does Pending Callbacks Phase Run?**  
+Consider the following code:
+
+```javascript
+const fs = require('fs');
+
+fs.readFile('test.txt', (err, data) => {
+  if (err) throw err;
+  console.log('1️⃣ File Read Callback (Poll Phase)');
+});
+
+setTimeout(() => {
+  console.log('2️⃣ setTimeout Callback (Timers Phase)');
+}, 0);
+
+setImmediate(() => {
+  console.log('3️⃣ setImmediate Callback (Check Phase)');
+});
+```
+
+---
+
+### **📌 How This Executes in the Event Loop?**
+| **Phase** | **Execution Order** | **Why?** |
+|-----------|----------------|--------|
+| **Main Thread** | Runs first | Runs synchronous code |
+| **Poll Phase** | Reads the file | `fs.readFile()` is I/O and handled in the Poll Phase |
+| **Pending Callbacks** | Handles low-priority I/O callbacks | If there were I/O errors, they would be executed here |
+| **Check Phase** | Executes `setImmediate()` | Runs before Timers Phase |
+| **Timers Phase** | Executes `setTimeout()` | Runs timers like `setTimeout()` |
+
+---
+
+### **📌 Expected Output**
+```plaintext
+1️⃣ File Read Callback (Poll Phase)
+3️⃣ setImmediate Callback (Check Phase)
+2️⃣ setTimeout Callback (Timers Phase)
+```
+
+---
+
+### **🤔 Why Is There a "Pending Callbacks" Phase?**
+- If an I/O **operation fails** (like a failed `fs.readFile()`), its **error callback is deferred** to the **Pending Callbacks Phase** instead of the Poll Phase.
+- This allows the event loop to **prioritize successfully completed I/O first**.
+
+---
+
+### **💡 Key Takeaways**
+✅ "Deferred to the next loop iteration" means **some I/O callbacks (especially errors) are not executed immediately** but are handled **in the Pending Callbacks Phase**.  
+✅ This phase **does not handle successful I/O operations**—only error callbacks or deferred tasks.  
+✅ It runs **before** the Poll Phase in the **next event loop iteration**.
+
+Would you like a **flowchart** to visualize this process? 😊
