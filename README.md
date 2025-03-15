@@ -1392,3 +1392,55 @@ console.log(addon.hello());  // Output: Hello from C++
 ✅ **Developers can create their own bindings** using C++ for custom high-performance features.  
 
 Would you like a **visual diagram** to understand this better? 😊
+
+Here is a **block-level diagram** of **libuv** components, showing how Node.js handles asynchronous operations.  
+
+---
+
+### **📌 Block Diagram of libuv in Node.js**
+```
++------------------------------------------------+
+|              Node.js (JavaScript)             |
++------------------------------------------------+
+              |          |        |        
+              v          v        v
++----------------+  +------------+  +----------------+
+|  Event Loop   |  |  Thread Pool |  |  System Kernel |
+| (Main Thread) |  | (Worker Threads) |  | (I/O, Timers, etc.) |
++----------------+  +------------+  +----------------+
+              |          |        |
++------------------------------------------------+
+|                  libuv                        |
+|------------------------------------------------|
+|    Timers  |  I/O Polling  |  Thread Pool    |
+|------------|--------------|------------------|
+|  setTimeout|   Sockets    |  File System I/O |
+|  setInterval |   TCP/UDP   |  DNS Lookup     |
++------------------------------------------------+
+```
+---
+
+### **📌 Explanation of libuv Components**
+| **Component**  | **What it Does?**  | **Example in Node.js** |
+|---------------|------------------|----------------------|
+| **Event Loop** | Keeps checking for tasks and executes them. | `setTimeout()`, `setImmediate()` |
+| **Timers** | Handles scheduled callbacks. | `setTimeout()`, `setInterval()` |
+| **I/O Polling** | Watches for I/O events (like file or network operations). | `fs.readFile()`, `net.createServer()` |
+| **Thread Pool** | Handles CPU-intensive tasks using worker threads. | `crypto.pbkdf2()`, `fs.readFile()` for large files |
+| **System Kernel** | Directly handles OS-level I/O operations asynchronously. | File system operations, network requests |
+
+---
+
+### **📌 How it Works?**
+1️⃣ **JavaScript Code Runs** (on the **Main Thread**)  
+2️⃣ **Event Loop Checks for Tasks** (like timers, network requests)  
+3️⃣ **Async Tasks Sent to libuv**  
+4️⃣ **libuv Offloads Tasks to:**
+   - **Kernel (for I/O operations)**
+   - **Thread Pool (for CPU-heavy tasks)**
+5️⃣ **Once Done, Callbacks Are Added to Event Loop**  
+6️⃣ **Event Loop Executes Callbacks in FIFO Order**  
+
+---
+
+Would you like a **detailed diagram with arrows** showing data flow? 😊
