@@ -901,3 +901,34 @@ Here’s a tabular comparison of **Blocking** and **Non-Blocking** operations in
 | **Use Case**       | When operations must execute in order (e.g., initializing configuration). | When handling I/O, API calls, or database queries efficiently. |
 
 Would you like more examples of blocking vs non-blocking code?
+
+Great question! The statement you mentioned refers to **how Node.js handles non-blocking I/O operations**, and there's often confusion about whether work is offloaded to the **system kernel** or **worker threads**. Let's break it down:
+
+### **Offloading to the System Kernel**
+- Node.js **does not perform I/O operations directly**; it relies on the **underlying operating system (OS) kernel** to handle most I/O tasks.
+- Many I/O operations (like file system reads, network requests, and database queries) are **delegated to the OS kernel**, which is multi-threaded and can process multiple requests concurrently.
+- The OS handles these tasks asynchronously and **notifies Node.js when they are complete**, allowing the event loop to execute the callback function.
+
+### **Offloading to Worker Threads**
+- Some operations **cannot be handled by the kernel alone** or require **CPU-intensive processing**.
+- For these cases, Node.js uses the **libuv** library, which has a built-in **thread pool** (worker threads).
+- Examples include:
+  - File system operations (`fs.readFile()`, `fs.writeFile()`) on some platforms.
+  - Cryptographic functions (`crypto.pbkdf2()`, `bcrypt hashing`).
+  - DNS lookups (`dns.lookup()`).
+  - Compression (`zlib` module).
+
+### **How It Works Together**
+| Operation Type      | Offloaded to OS Kernel? | Uses Worker Threads? |
+|---------------------|-----------------------|----------------------|
+| Network I/O (HTTP, TCP, UDP) | ✅ Yes | ❌ No |
+| File System (`fs.readFile()`) | ✅ Sometimes | ✅ Sometimes |
+| DNS Lookup (`dns.lookup()`) | ❌ No | ✅ Yes |
+| Crypto (`crypto.pbkdf2()`) | ❌ No | ✅ Yes |
+| Compression (`zlib.gzip()`) | ❌ No | ✅ Yes |
+
+So, the key takeaway is:
+1. **If the OS kernel can handle the operation asynchronously, Node.js offloads it to the kernel** (e.g., networking, some file operations).
+2. **If an operation is CPU-intensive and cannot be async in the kernel, Node.js offloads it to the worker threads**.
+
+Would you like a deeper dive into a specific part of this?
