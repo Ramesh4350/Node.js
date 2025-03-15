@@ -1500,3 +1500,114 @@ Timeout Callback
 ✅ **Event Loop**: Moves tasks from Event Queue to Call Stack when it's empty.  
 
 Would you like a **diagram** to visualize this? 😊
+
+Here's a **detailed architecture diagram** of **Node.js**, including the **Call Stack, Event Queue, Microtask Queue, and Worker Threads**.  
+
+---
+
+### **📌 Node.js Architecture Diagram**
+```
++------------------------------------------------+
+|          Node.js (Single-Threaded)            |
++------------------------------------------------+
+            |            |           |
+            v            v           v
++----------------+  +----------------+  +----------------+
+|  Call Stack   |  |  Microtask Queue |  |  Event Queue  |
+| (Executes JS) |  | (Promises, nextTick)|  | (setTimeout, I/O) |
++----------------+  +----------------+  +----------------+
+            |            |           |
+            v            |           |
++------------------------------------------------+
+|                Event Loop                      |
+|------------------------------------------------|
+|  1. Timers (setTimeout, setInterval)          |
+|  2. Pending Callbacks (I/O Callbacks)         |
+|  3. Idle, Prepare (Internal Use)              |
+|  4. Poll (Handles I/O Events)                 |
+|  5. Check (setImmediate Callbacks)            |
+|  6. Close Callbacks (Cleanup Tasks)           |
++------------------------------------------------+
+            |           |
+            v           v
++------------------------------------------------+
+|                  libuv                         |
+|------------------------------------------------|
+|    I/O Polling  |  Thread Pool (Worker Threads) |
+|-----------------|------------------------------|
+|  File System I/O|  Crypto, Compression, etc.   |
+|  Network Sockets|  CPU-intensive Operations    |
++------------------------------------------------+
+            |
+            v
++------------------------------------------------+
+|            Operating System Kernel             |
+|   (Handles actual I/O operations asynchronously) |
++------------------------------------------------+
+```
+
+---
+
+### **📌 Explanation of Components**
+| **Component**  | **Function** |
+|---------------|-------------|
+| **Call Stack** | Executes synchronous JavaScript code using **LIFO (Last In, First Out)**. |
+| **Microtask Queue** | Stores high-priority callbacks like **Promises** and `process.nextTick()`. |
+| **Event Queue (Task Queue)** | Stores async callbacks from `setTimeout()`, `setInterval()`, and I/O operations. |
+| **Event Loop** | Moves tasks from the **Event Queue** and **Microtask Queue** to the **Call Stack** when it’s empty. |
+| **Worker Threads (Thread Pool)** | Manages CPU-intensive tasks like `crypto.pbkdf2()`, `fs.readFile()`, etc. |
+| **libuv** | Handles **async I/O operations** using **Thread Pool** and delegates work to the **OS Kernel**. |
+| **OS Kernel** | Performs actual file system and network operations asynchronously. |
+
+---
+
+### **📌 How it Works?**
+1️⃣ **JavaScript Code Starts** → Runs synchronously in **Call Stack**  
+2️⃣ **Async Operations (setTimeout, fs.readFile, Promises) are sent to libuv**  
+3️⃣ **libuv handles I/O and CPU tasks**  
+4️⃣ **Completed callbacks move to the Event Queue**  
+5️⃣ **Event Loop moves tasks from Event Queue → Call Stack (when empty)**  
+6️⃣ **Microtask Queue (Promises, nextTick) gets priority before Event Queue tasks**  
+7️⃣ **Call Stack executes the task, and the cycle continues**  
+
+---
+
+### **📌 Example Code Execution Flow**
+```javascript
+console.log("Start");
+
+setTimeout(() => {
+  console.log("Timeout Callback");
+}, 0);
+
+Promise.resolve().then(() => console.log("Promise Callback"));
+
+console.log("End");
+```
+
+#### **Execution Order**
+1️⃣ `"Start"` → **Call Stack**  
+2️⃣ `setTimeout()` → Sent to **Web API** (handled by libuv)  
+3️⃣ `Promise.resolve().then()` → **Microtask Queue**  
+4️⃣ `"End"` → **Call Stack**  
+5️⃣ Microtask Queue runs → `"Promise Callback"`  
+6️⃣ Event Queue runs → `"Timeout Callback"`  
+
+**Final Output:**
+```
+Start
+End
+Promise Callback
+Timeout Callback
+```
+
+---
+
+### **📌 Summary**
+✅ **Call Stack** runs synchronous code (**LIFO**).  
+✅ **Microtask Queue** (**Promises, process.nextTick**) runs before Event Queue.  
+✅ **Event Queue** (**Timers, I/O callbacks**) runs next.  
+✅ **Worker Threads (libuv)** handles CPU-intensive tasks.  
+✅ **Event Loop** moves tasks to Call Stack **when it’s empty**.  
+
+Would you like a **graphical diagram**? 😊
