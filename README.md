@@ -887,3 +887,17 @@ app.use(compression());
 7. **Compress responses for faster delivery.**
 
 Would you like me to help with a **specific performance issue** in your Node.js app? 🚀🔥
+
+Here’s a tabular comparison of **Blocking** and **Non-Blocking** operations in Node.js:
+
+| Feature            | Blocking Operation           | Non-Blocking Operation       |
+|--------------------|----------------------------|------------------------------|
+| **Definition**     | Waits for a task to complete before moving to the next operation. | Executes asynchronously, allowing the next operation to proceed immediately. |
+| **Execution**      | Synchronous (executes in a sequence). | Asynchronous (does not wait for a task to complete). |
+| **Performance**    | Slower due to sequential execution. | Faster as multiple tasks execute concurrently. |
+| **Thread Usage**   | Blocks the main thread. | Uses Node.js event loop and callback functions. |
+| **Scalability**    | Less scalable as it waits for I/O operations. | Highly scalable due to non-blocking nature. |
+| **Example**        | `fs.readFileSync('file.txt', 'utf8');` | `fs.readFile('file.txt', 'utf8', (err, data) => {...});` |
+| **Use Case**       | When operations must execute in order (e.g., initializing configuration). | When handling I/O, API calls, or database queries efficiently. |
+
+Would you like more examples of blocking vs non-blocking code?
