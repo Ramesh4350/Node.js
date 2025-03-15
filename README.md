@@ -997,3 +997,89 @@ Here's a **block diagram** of the **Node.js lifecycle**, showing how it starts, 
 ---
 
 Would you like a **visual diagram image** for this? 😊
+
+Here's the **updated block diagram** including the **Main Thread** and **Worker Threads**, showing how Node.js handles tasks using the **event loop and worker threads**.
+
+---
+
+### **📌 Node.js Lifecycle with Main Thread & Worker Threads**  
+
+```plaintext
+     +----------------------+
+     |  Start Node.js App   |
+     +----------------------+
+               |
+               v
+     +----------------------+
+     |  Execute Script (JS) |
+     |  (Run Synchronous Code) |
+     +----------------------+
+               |
+               v
+     +----------------------+
+     |  Initialize Event Loop |
+     |  (Main Thread)        |
+     +----------------------+
+               |
+               v
+     +-------------------------------------+
+     |       Event Loop Phases (Main Thread) |
+     |-------------------------------------|
+     |  1. Timers (setTimeout, setInterval) |
+     |  2. Pending Callbacks (I/O Events)  |
+     |  3. Idle, Prepare (Internal)        |
+     |  4. Poll (Main I/O Operations)      |
+     |  5. Check (setImmediate)            |
+     |  6. Close Callbacks (Cleanup Tasks) |
+     +-------------------------------------+
+               |
+               |
+     +-------------------------------------+
+     |      CPU-Intensive or Blocking Work |
+     |-------------------------------------|
+     |     Sent to Worker Threads (libuv)  |
+     | - File System Operations (fs.read)  |
+     | - Crypto (hashing, encryption)      |
+     | - Compression (zlib, gzip)          |
+     | - DNS Lookup (dns.lookup)           |
+     +-------------------------------------+
+               |
+               v
+     +----------------------+
+     |  Check for Pending   |
+     |  Timers or I/O       |
+     +----------------------+
+        |          |
+        | Yes      | No
+        |          v
+        |    +------------------+
+        |    | Exit Application |
+        |    +------------------+
+        |
+        v
+     (Go Back to Event Loop)
+```
+
+---
+
+### **📌 Explanation of Main Thread & Worker Threads**
+1️⃣ **Main Thread (Single-Threaded)**
+   - Runs the event loop.
+   - Handles asynchronous tasks like network requests (`HTTP`), database queries, and scheduling timers.
+   - Delegates CPU-heavy tasks to worker threads.
+
+2️⃣ **Worker Threads (Multi-Threaded)**
+   - Used for CPU-intensive operations.
+   - Handles operations like file system access (`fs.readFile()`), encryption (`crypto.pbkdf2()`), and compression (`zlib.gzip()`).
+   - Uses **libuv** (Node.js’ internal library) to manage background threads.
+
+---
+
+### **📌 Key Takeaways**
+✅ The **Main Thread handles non-blocking I/O operations** via the event loop.  
+✅ **Blocking or CPU-heavy tasks are offloaded to Worker Threads** to avoid slowing down the event loop.  
+✅ **If there are pending timers or I/O operations, the event loop keeps running.** Otherwise, Node.js exits.  
+
+---
+
+Would you like a **visual image representation** of this diagram? 😊🚀
