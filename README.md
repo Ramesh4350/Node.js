@@ -1083,3 +1083,34 @@ Here's the **updated block diagram** including the **Main Thread** and **Worker 
 ---
 
 Would you like a **visual image representation** of this diagram? 😊🚀
+
+Yes, **"Execute Script (JS) (Run Synchronous Code)"** is executed by the **Main Thread** in Node.js.  
+
+### **📌 Explanation**
+✅ **Main Thread** is responsible for executing the **top-level synchronous code** before entering the event loop.  
+✅ This includes:
+   - Variable declarations  
+   - Function definitions  
+   - Immediate calculations  
+   - `console.log()` statements  
+   - Any other synchronous operations  
+
+After running the synchronous code, the **event loop** starts handling asynchronous operations like `setTimeout()`, `fs.readFile()`, or `HTTP requests`.  
+
+### **Example**
+```javascript
+console.log("Start"); // Runs in Main Thread
+
+setTimeout(() => {
+  console.log("Inside setTimeout"); // Handled in Event Loop (Timers Phase)
+}, 1000);
+
+console.log("End"); // Runs in Main Thread
+```
+**Output (executed by Main Thread & Event Loop):**
+```
+Start  <-- Main Thread
+End    <-- Main Thread
+Inside setTimeout  <-- Event Loop (Timers Phase)
+```
+Would you like me to mark **worker thread tasks** separately in the diagram? 😊
