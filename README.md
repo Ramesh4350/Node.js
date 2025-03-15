@@ -1166,3 +1166,71 @@ console.log("3: End");  // Main thread executes this
 ✅ The **event loop keeps running until there are no more async tasks** left in the queue.  
 
 Would you like a **visual flowchart** to illustrate this? 😊
+
+### **📌 Understanding the Event Loop Phases in Node.js**  
+
+The **event loop** is what allows Node.js to handle asynchronous tasks **without blocking** the main thread. It runs in **phases**, processing different types of callbacks in each phase.
+
+---
+
+### **🚀 Event Loop Phases (Executed by the Main Thread)**  
+Each phase executes callbacks from a **queue (FIFO - First In, First Out)** before moving to the next phase.
+
+| **Phase** | **What It Does?** | **Example Tasks** |
+|-----------|------------------|------------------|
+| **1️⃣ Timers** | Executes callbacks scheduled by `setTimeout()` & `setInterval()`. | `setTimeout(() => console.log('Timer fired'), 1000);` |
+| **2️⃣ Pending Callbacks** | Handles I/O callbacks that were deferred to the next loop iteration. | `fs.readFile()` callback when an error occurs. |
+| **3️⃣ Idle, Prepare** _(Internal)_ | Used internally by Node.js. Not useful for developers. | _(No direct impact on your code)_ |
+| **4️⃣ Poll (Main I/O Operations)** | Handles new incoming I/O events (e.g., file system, network, database queries). | `fs.readFile('file.txt', (err, data) => { console.log(data); });` |
+| **5️⃣ Check** | Executes callbacks scheduled by `setImmediate()`. | `setImmediate(() => console.log('Inside setImmediate'));` |
+| **6️⃣ Close Callbacks** | Runs cleanup tasks like `socket.on('close', ...)`. | Closing database connections, releasing resources. |
+
+---
+
+### **📌 Event Loop Phases in Action**  
+
+#### **Example Code**
+```javascript
+const fs = require('fs');
+
+console.log("1. Start"); // Main thread
+
+setTimeout(() => {
+  console.log("2. Timer callback (setTimeout)");
+}, 0);
+
+setImmediate(() => {
+  console.log("3. Immediate callback (setImmediate)");
+});
+
+fs.readFile(__filename, () => {
+  console.log("4. File read completed (Poll Phase)");
+});
+
+console.log("5. End"); // Main thread
+```
+
+#### **📌 Expected Output:**
+```plaintext
+1. Start  <-- (Main Thread)
+5. End    <-- (Main Thread)
+4. File read completed (Poll Phase) <-- (Executed in Poll Phase)
+3. Immediate callback (setImmediate) <-- (Check Phase)
+2. Timer callback (setTimeout) <-- (Timers Phase)
+```
+
+---
+
+### **🚀 How the Event Loop Works with This Code?**
+1️⃣ **Main Thread executes** → "1. Start" & "5. End".  
+2️⃣ **Event Loop Phases Execute:**  
+   - **Poll Phase** → Reads the file, executes its callback.  
+   - **Check Phase** → Executes `setImmediate()`.  
+   - **Timers Phase** → Executes `setTimeout()`.  
+
+#### **Key Takeaways**
+✅ The **poll phase** prioritizes I/O callbacks **before** timers.  
+✅ `setImmediate()` runs **before** `setTimeout()` if I/O is involved.  
+✅ The event loop keeps running **as long as there are pending tasks**.  
+
+Would you like a **visual flowchart** for better understanding? 😊
