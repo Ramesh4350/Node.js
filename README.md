@@ -1611,3 +1611,41 @@ Timeout Callback
 ✅ **Event Loop** moves tasks to Call Stack **when it’s empty**.  
 
 Would you like a **graphical diagram**? 😊
+
+Here's a **table of built-in Node.js modules** with both **synchronous and asynchronous methods**, including their **input parameters and return types**.
+
+---
+
+### **📌 Node.js Built-in Modules (Sync vs Async)**
+| **Module**  | **Method (Sync/Async)** | **Input Parameters** | **Return Type** |
+|------------|----------------------|-------------------|----------------|
+| **fs (File System)** | `fs.readFileSync(path, options?)` (Sync) | `path: string` <br> `options?: object` | `string | Buffer` |
+|            | `fs.readFile(path, options, callback)` (Async) | `path: string` <br> `options?: object` <br> `callback: function(err, data)` | `void` (uses callback) |
+|            | `fs.writeFileSync(path, data, options?)` (Sync) | `path: string` <br> `data: string | Buffer` <br> `options?: object` | `void` |
+|            | `fs.writeFile(path, data, options, callback)` (Async) | `path: string` <br> `data: string | Buffer` <br> `options?: object` <br> `callback: function(err)` | `void` |
+| **http**   | `http.createServer(callback)` (Async) | `callback: function(req, res)` | `http.Server` |
+|            | `http.request(options, callback?)` (Async) | `options: object | string` <br> `callback?: function(res)` | `http.ClientRequest` |
+| **crypto** | `crypto.randomBytes(size)` (Sync) | `size: number` | `Buffer` |
+|            | `crypto.randomBytes(size, callback)` (Async) | `size: number` <br> `callback: function(err, buffer)` | `void` (uses callback) |
+| **path**   | `path.join(...paths)` (Sync) | `...paths: string[]` | `string` |
+|            | `path.resolve(...paths)` (Sync) | `...paths: string[]` | `string` |
+| **os**     | `os.cpus()` (Sync) | *None* | `Array of CPU info objects` |
+|            | `os.totalmem()` (Sync) | *None* | `number (bytes)` |
+| **dns**    | `dns.lookup(hostname, options, callback)` (Async) | `hostname: string` <br> `options?: object` <br> `callback: function(err, address, family)` | `void` (uses callback) |
+|            | `dns.lookupSync(hostname, options?)` (Sync) | `hostname: string` <br> `options?: object` | `address: string, family: number` |
+| **zlib**   | `zlib.gzipSync(buffer, options?)` (Sync) | `buffer: Buffer | string` <br> `options?: object` | `Buffer` |
+|            | `zlib.gzip(buffer, options, callback)` (Async) | `buffer: Buffer | string` <br> `options?: object` <br> `callback: function(err, result)` | `void` |
+| **util**   | `util.promisify(fn)` (Sync) | `fn: Function` | `Promise-based function` |
+|            | `util.callbackify(fn)` (Sync) | `fn: Async function` | `Callback-based function` |
+
+---
+
+### **📌 Notes**
+- **Sync methods block execution** until they finish.
+- **Async methods use callbacks or Promises** to avoid blocking the event loop.
+- The **`fs` module** has Promise-based versions (`fs.promises.readFile()`).
+- **Promisified functions** (using `util.promisify`) allow using `async/await` instead of callbacks.
+
+---
+
+Would you like a **more detailed list** or **examples** for any of these? 🚀
