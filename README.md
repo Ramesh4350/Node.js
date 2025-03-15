@@ -1444,3 +1444,59 @@ Here is a **block-level diagram** of **libuv** components, showing how Node.js h
 ---
 
 Would you like a **detailed diagram with arrows** showing data flow? 😊
+
+### **📌 Difference Between Event Queue and Callback Stack in Node.js**  
+
+| Feature            | **Event Queue**                              | **Callback Stack (Call Stack)**         |
+|-------------------|---------------------------------|--------------------------------|
+| **What is it?**   | A queue that stores callbacks waiting to be executed. | A stack where function calls are executed one by one. |
+| **Order of Execution** | **FIFO** (First In, First Out) | **LIFO** (Last In, First Out) |
+| **Where is it Used?**  | **Asynchronous Tasks** (e.g., `setTimeout`, `fs.readFile`) | **Synchronous Code Execution** (e.g., normal function calls) |
+| **Who Manages It?** | **Event Loop** moves tasks from Event Queue to Callback Stack. | The **JavaScript Engine (V8)** executes the stack. |
+| **Example Scenario** | Callback from `setTimeout(() => console.log("Hello"), 1000);` is added to Event Queue after 1 sec. | A normal function call like `functionA()` is pushed to the stack, runs, then removed. |
+| **When is it Empty?** | Never empty, always waiting for tasks. | Becomes empty after all synchronous functions finish execution. |
+
+---
+
+### **📌 How They Work Together?**
+1️⃣ **JavaScript first runs synchronous code** (fills the Call Stack).  
+2️⃣ **Async tasks (e.g., `setTimeout()`) are sent to Web APIs** (handled outside Call Stack).  
+3️⃣ **Once the async task is completed**, its callback is added to the **Event Queue**.  
+4️⃣ **The Event Loop moves the callback from the Event Queue to the Call Stack** when it's empty.  
+5️⃣ **Callback is executed**, and the process continues.
+
+---
+
+### **📌 Example Code Execution Flow**
+```javascript
+console.log("Start");  // Step 1 - Call Stack
+
+setTimeout(() => {     
+  console.log("Timeout Callback");  // Step 5 - Event Queue
+}, 1000);
+
+console.log("End");  // Step 2 - Call Stack
+```
+
+#### **Execution Order**
+1️⃣ `"Start"` (executes first in the **Call Stack**)  
+2️⃣ `setTimeout()` is called → Sent to **Web API** (not in Call Stack)  
+3️⃣ `"End"` (executes next in **Call Stack**)  
+4️⃣ After 1 sec, the **callback** is moved from **Event Queue** to **Call Stack**  
+5️⃣ `"Timeout Callback"` executes  
+
+**Final Output:**
+```
+Start
+End
+Timeout Callback
+```
+
+---
+
+### **📌 Summary**
+✅ **Call Stack**: Runs synchronous code, follows **LIFO** (Last In, First Out).  
+✅ **Event Queue**: Holds callbacks for async tasks, follows **FIFO** (First In, First Out).  
+✅ **Event Loop**: Moves tasks from Event Queue to Call Stack when it's empty.  
+
+Would you like a **diagram** to visualize this? 😊
