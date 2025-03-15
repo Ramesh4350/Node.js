@@ -1298,3 +1298,5 @@ setImmediate(() => {
 ✅ It runs **before** the Poll Phase in the **next event loop iteration**.
 
 Would you like a **flowchart** to visualize this process? 😊
+
+<img width="533" alt="image" src="https://github.com/user-attachments/assets/37e0e8f5-718e-4732-adee-d42248fc570f" />
