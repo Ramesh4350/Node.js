@@ -932,3 +932,68 @@ So, the key takeaway is:
 2. **If an operation is CPU-intensive and cannot be async in the kernel, Node.js offloads it to the worker threads**.
 
 Would you like a deeper dive into a specific part of this?
+
+Here's a **block diagram** of the **Node.js lifecycle**, showing how it starts, processes tasks, and manages the event loop.
+
+---
+
+### **📌 Node.js Lifecycle (Block Diagram Representation)**  
+
+```plaintext
+     +----------------------+
+     |  Start Node.js App   |
+     +----------------------+
+               |
+               v
+     +----------------------+
+     |  Execute Script (JS) |
+     |  (Run Synchronous Code) |
+     +----------------------+
+               |
+               v
+     +----------------------+
+     |  Initialize Event Loop |
+     +----------------------+
+               |
+               v
+     +-------------------------------------+
+     |           Event Loop Phases         |
+     |-------------------------------------|
+     |  1. Timers (setTimeout, setInterval) |
+     |  2. Pending Callbacks (I/O Events)  |
+     |  3. Idle, Prepare (Internal)        |
+     |  4. Poll (Main I/O Operations)      |
+     |  5. Check (setImmediate)            |
+     |  6. Close Callbacks (Cleanup Tasks) |
+     +-------------------------------------+
+               |
+               v
+     +----------------------+
+     |  Check for Pending   |
+     |  Timers or I/O       |
+     +----------------------+
+        |          |
+        | Yes      | No
+        |          v
+        |    +------------------+
+        |    | Exit Application |
+        |    +------------------+
+        |
+        v
+     (Go Back to Event Loop)
+
+```
+
+---
+
+### **📌 How It Works (Step-by-Step)**
+1️⃣ **Start Node.js Application** → Runs the main script.  
+2️⃣ **Execute Synchronous Code** → Processes everything outside callbacks.  
+3️⃣ **Initialize Event Loop** → Starts handling async tasks.  
+4️⃣ **Event Loop Phases** → Executes timers, I/O tasks, etc., in order.  
+5️⃣ **Check for Pending Work** → If there are still pending timers/I/O, keep looping.  
+6️⃣ **Exit Process** → If nothing is left, the process exits.  
+
+---
+
+Would you like a **visual diagram image** for this? 😊
