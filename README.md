@@ -1649,3 +1649,33 @@ Here's a **table of built-in Node.js modules** with both **synchronous and async
 ---
 
 Would you like a **more detailed list** or **examples** for any of these? 🚀
+
+Great follow-up!
+
+### ✅ `"5" - 1` is `4`
+
+### ❓Why?
+
+* In JavaScript, the `-` operator **forces both operands to be numbers**.
+* `"5"` is a string, but JavaScript **coerces it to a number** because subtraction doesn't make sense for strings.
+* So:
+
+  ```js
+  "5" - 1  
+  => Number("5") - 1  
+  => 5 - 1  
+  => 4
+  ```
+
+---
+
+### 🔁 Comparison: `"5" + 1` vs `"5" - 1`
+
+| Expression | Result | Reason                                |
+| ---------- | ------ | ------------------------------------- |
+| `"5" + 1`  | `"51"` | `+` triggers **string concatenation** |
+| `"5" - 1`  | `4`    | `-` forces **number conversion**      |
+
+---
+
+Let me know if you want a **list of common coercion examples with explanations** or a **practice quiz** to test yourself.
