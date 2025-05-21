@@ -200,3 +200,62 @@ console.log(x - 0) // 5 (also number)
 
 Want me to explain `/` and `%` next?
 _____________________________________________________________________________________________
+
+Absolutely! Here's a **simple thumb rule** for understanding and using `==` (loose equality) vs `===` (strict equality) in JavaScript, especially for tricky cases like `0 == false`.
+
+---
+
+## 🔑 Thumb Rule for `==` (Loose Equality)
+
+> **`==` compares values after type coercion according to specific rules:**
+
+### When using `a == b`:
+
+1. **If types are same → compare values directly.**
+2. **If types differ:**
+
+   * If one is `null` and the other `undefined` → `true`
+   * If one is `number` and the other `string` → convert string to number, then compare
+   * If one is `boolean` → convert boolean to number (`true → 1`, `false → 0`), then compare
+   * If one is object and the other is primitive → convert object to primitive, then compare
+
+### Important:
+
+* `false` converts to `0`
+* `""` (empty string) converts to `0`
+* `null` and `undefined` are only loosely equal to each other, **not to anything else**
+* `NaN` is **not equal to anything**, even itself
+
+---
+
+## 🔒 Thumb Rule for `===` (Strict Equality)
+
+> **`===` compares both value and type without any coercion**
+
+* So `0 === false` is `false` because number ≠ boolean
+* Use `===` when you want predictable, safe comparisons
+
+---
+
+## 📊 Quick Examples Recap:
+
+| Expression           | Result  | Explanation                         |
+| -------------------- | ------- | ----------------------------------- |
+| `0 == false`         | `true`  | `false` → 0, compare 0 == 0         |
+| `0 === false`        | `false` | Different types (number vs boolean) |
+| `"" == 0`            | `true`  | `""` → 0, compare 0 == 0            |
+| `"" === 0`           | `false` | Different types                     |
+| `null == undefined`  | `true`  | Special equality case               |
+| `null === undefined` | `false` | Different types                     |
+| `false == "0"`       | `true`  | `"0"` → 0, `false` → 0              |
+
+---
+
+### ⚠️ Best Practice:
+
+**Always use `===` unless you specifically want type coercion with `==`.**
+
+---
+
+If you want, I can give you a small set of practice questions on `==` vs `===` to reinforce this!
+
